@@ -59,10 +59,10 @@
     "lint"
   ],
   "dependencies": {
+    "@mjpsyapse/rc-trigger": "^2.6.5",
     "babel-runtime": "^6.26.0",
     "classnames": "^2.2.6",
     "prop-types": "^15.5.8",
-    "rc-trigger": "^2.5.1",
     "react-lifecycles-compat": "^3.0.2"
   }
 }
