@@ -1,7 +1,6 @@
 import React, { Component, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
-import Trigger from 'rc-trigger';
+import Trigger from '@mjpsyapse/rc-trigger';
 import classNames from 'classnames';
 import placements from './placements';
 import { polyfill } from 'react-lifecycles-compat';
@@ -47,6 +46,8 @@ class Dropdown extends Component {
 
   constructor(props) {
     super(props);
+    this.triggerRef = React.createRef();
+    this.ref = React.createRef();
     if ('visible' in props) {
       this.state = {
         visible: props.visible,
@@ -136,7 +137,7 @@ class Dropdown extends Component {
   }
 
   getPopupDomNode() {
-    return this.trigger.getPopupDomNode();
+    return this.triggerRef.current.getPopupDomNode();
   }
 
   getOpenClassName() {
@@ -150,20 +151,16 @@ class Dropdown extends Component {
   afterVisibleChange = (visible) => {
     if (visible && this.getMinOverlayWidthMatchTrigger()) {
       const overlayNode = this.getPopupDomNode();
-      const rootNode = ReactDOM.findDOMNode(this);
+      const rootNode = this.ref.current; // internals of trigger
       if (rootNode && overlayNode && rootNode.offsetWidth > overlayNode.offsetWidth) {
         overlayNode.style.minWidth = `${rootNode.offsetWidth}px`;
-        if (this.trigger &&
-            this.trigger._component &&
-            this.trigger._component.alignInstance) {
-          this.trigger._component.alignInstance.forceAlign();
+        if (this.triggerRef.current &&
+            this.triggerRef.current._component &&
+            this.triggerRef.current._component.alignInstance) {
+          this.triggerRef.current._component.alignInstance.forceAlign();
         }
       }
     }
-  }
-
-  saveTrigger = (node) => {
-    this.trigger = node;
   }
 
   renderChildren() {
@@ -193,7 +190,8 @@ class Dropdown extends Component {
       <Trigger
         {...otherProps}
         prefixCls={prefixCls}
-        ref={this.saveTrigger}
+        ref={this.triggerRef}
+        forwardedRef={this.ref}
         popupClassName={overlayClassName}
         popupStyle={overlayStyle}
         builtinPlacements={placements}
